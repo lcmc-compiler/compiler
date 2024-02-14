@@ -17,6 +17,12 @@ progbody : LET dec+ IN exp SEMIC  #letInProg
 dec : VAR ID COLON type ASS exp SEMIC  #vardec
     | FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR 
         	(LET dec+ IN)? exp SEMIC   #fundec
+    /***/
+    | CLASS ID type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
+            CLPAR
+            (FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
+                                 	(LET dec+ IN)? exp SEMIC)*
+            CRPAR #classdec
     ;
            
 exp     : exp TIMES exp #times
@@ -32,6 +38,10 @@ exp     : exp TIMES exp #times
         | exp DIV exp #div
         | NOT exp #not
         | exp MINUS exp #minus
+            //TODO
+        | NULL #null
+        | NEW exp
+        | exp DOT exp
     	    /***/
 	    | TRUE #true     
 	    | FALSE #false
@@ -43,6 +53,8 @@ exp     : exp TIMES exp #times
              
 type    : INT #intType
         | BOOL #boolType
+        /***/
+        | ID #idType
  	    ;  
  	  		  
 /*------------------------------------------------------------------
@@ -69,6 +81,9 @@ AND     : '&&';
 DIV     : '/';
 DOT     : '.';
 NOT     : '!';
+CLASS   : 'class';
+NULL    : 'null';
+NEW     : 'new';
 /***/
 TRUE	: 'true' ;
 FALSE	: 'false' ;
