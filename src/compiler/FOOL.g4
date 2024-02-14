@@ -24,6 +24,15 @@ exp     : exp TIMES exp #times
         | exp EQ  exp   #eq 
         | LPAR exp RPAR #pars
     	| MINUS? NUM #integer
+    	    /***/
+        | exp LESSEQ exp #lesseq
+        | exp GREQ exp #greq
+        | exp OR exp #or
+        | exp AND exp #and
+        | exp DIV exp #div
+        | NOT exp #not
+        | exp MINUS exp #minus
+    	    /***/
 	    | TRUE #true     
 	    | FALSE #false
 	    | IF exp THEN CLPAR exp CRPAR ELSE CLPAR exp CRPAR  #if   
@@ -52,6 +61,15 @@ COLON   : ':' ;
 COMMA	: ',' ;
 EQ	    : '==' ;	
 ASS	    : '=' ;
+/***/
+LESSEQ  : '<=';
+GREQ    : '>=';
+OR      : '||';
+AND     : '&&';
+DIV     : '/';
+DOT     : '.';
+NOT     : '!';
+/***/
 TRUE	: 'true' ;
 FALSE	: 'false' ;
 IF	    : 'if' ;
