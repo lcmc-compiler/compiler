@@ -40,8 +40,8 @@ exp     : exp TIMES exp #times
         | exp MINUS exp #minus
             //TODO
         | NULL #null
-        | NEW exp
-        | exp DOT exp
+        | NEW exp #new
+        | exp DOT exp #dot
     	    /***/
 	    | TRUE #true     
 	    | FALSE #false
