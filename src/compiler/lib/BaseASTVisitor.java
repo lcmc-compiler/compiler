@@ -81,4 +81,6 @@ public class BaseASTVisitor<S,E extends Exception> {
 	public S visitNode(DotNode dotNode) throws E {throw new UnimplException();}
 	public S visitNode(IdTypeNode idTypeNode) throws E {throw new UnimplException();}
 	public S visitNode(ClassNode classNode) throws E {throw new UnimplException();}
+
+	public S visitNode(MethodNode classNode) throws E {throw new UnimplException();}
 }

@@ -47,6 +47,8 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		if (print) printVarAndProdName(c);
 		List<DecNode> declist = new ArrayList<>();
 		for (DecContext dec : c.dec()) declist.add((DecNode) visit(dec));
+		List<ClassNode> classlist = new ArrayList<>();
+		for (ClassdecContext dec : c.classdec()) classlist.add((ClassNode) visit(dec));
 		return new ProgLetInNode(declist, visit(c.exp()));
 	}
 
@@ -129,17 +131,36 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	}
 
 	@Override
-	public Node visitClassdec(ClassdecContext c) {
+	public Node visitMethoddec(MethoddecContext c) {
 		if (print) printVarAndProdName(c);
 		List<ParNode> parList = new ArrayList<>();
 		for (int i = 1; i < c.ID().size(); i++) {
 			ParNode p = new ParNode(c.ID(i).getText(),(TypeNode) visit(c.type(i)));
-			System.out.println("STAMPO: " + c.ID(i).getText());
 			p.setLine(c.ID(i).getSymbol().getLine());
 			parList.add(p);
 		}
-		List<FunNode> funList = new ArrayList<>();
-		for (MethoddeclContext dec : c.methoddecl()) funList.add((FunNode) visit(dec));
+		List<DecNode> decList = new ArrayList<>();
+
+		for (DecContext dec : c.dec()) decList.add((DecNode) visit(dec));
+		Node n = null;
+		if (c.ID().size()>0) { //non-incomplete ST
+			n = new MethodNode(c.ID(0).getText(),(TypeNode)visit(c.type(0)),parList,decList,visit(c.exp()));
+			n.setLine(c.FUN().getSymbol().getLine());
+		}
+		return n;
+	}
+
+	@Override
+	public Node visitClassdec(ClassdecContext c) {
+		if (print) printVarAndProdName(c);
+		List<ParNode> parList = new ArrayList<>();
+		for (int i = 0; i < c.ID().size(); i++) {
+			ParNode p = new ParNode(c.ID(i).getText(),(TypeNode) visit(c.type(i)));
+			p.setLine(c.ID(i).getSymbol().getLine());
+			parList.add(p);
+		}
+		List<MethodNode> funList = new ArrayList<>();
+		for (MethoddecContext dec : c.methoddec()) funList.add((MethodNode) visit(dec));
 		Node n = null;
 		if (c.ID().size()>0) {
 			n = new ClassNode(c.ID(0).getText(),parList,funList);

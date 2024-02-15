@@ -45,6 +45,17 @@ public class AST {
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
+	public static class MethodNode extends FunNode {
+		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
+            super(i, rt, pl, dl, e);
+		}
+
+		//void setType(TypeNode t) {type = t;}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+
 	public static class ParNode extends DecNode {
 		final String id;
 		ParNode(String i, TypeNode t) {id = i; type = t;}
@@ -111,8 +122,8 @@ public class AST {
 	public static class ClassNode extends DecNode {
 		final String id;
 		final List<ParNode> parlist;
-		final List<FunNode> funlist;
-		ClassNode(String i, List<ParNode> pl, List<FunNode> fl) {
+		final List<MethodNode> funlist;
+		ClassNode(String i, List<ParNode> pl, List<MethodNode> fl) {
 			id=i;
 			parlist=Collections.unmodifiableList(pl);
 			funlist=Collections.unmodifiableList(fl);
