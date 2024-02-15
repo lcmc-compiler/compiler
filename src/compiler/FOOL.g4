@@ -18,16 +18,14 @@ dec : VAR ID COLON type ASS exp SEMIC  #vardec
     | FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR 
         	(LET dec+ IN)? exp SEMIC   #fundec
     /***/
-    | CLASS ID LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
-            CLPAR
-            (FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
-                                 	(LET dec+ IN)? exp SEMIC)*
-            CRPAR #classdec
+    | CLASS ID type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
+            CLPAR (FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
+                (LET dec+ IN)? exp SEMIC)* CRPAR #classdec
     ;
-           
+
 exp     : exp TIMES exp #times
         | exp PLUS  exp #plus
-        | exp EQ  exp   #eq 
+        | exp EQ  exp   #eq
         | LPAR exp RPAR #pars
     	| MINUS? NUM #integer
     	    /***/
@@ -38,6 +36,7 @@ exp     : exp TIMES exp #times
         | exp DIV exp #div
         | NOT exp #not
         | exp MINUS exp #minus
+            //TODO
         | NULL #null
         | NEW exp #new
         | exp DOT exp #dot
