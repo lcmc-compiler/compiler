@@ -1,0 +1,7 @@
+let
+    class A(a:int, b:bool){
+        fun n:int(a:int) a+1 ;
+        fun m:bool(b:bool) !b ;
+    }
+in
+    print (new A(5, true)) ;
