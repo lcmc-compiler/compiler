@@ -10,17 +10,21 @@ public int lexicalErrors=0;
   
 prog  : progbody EOF ;
      
-progbody : LET dec+ IN exp SEMIC  #letInProg
+progbody : LET (classdecl* dec+ | dec+) IN exp SEMIC  #letInProg
          | exp SEMIC              #noDecProg
          ;
-  
+
+methoddecl : (FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
+                                     (LET dec+ IN)? exp SEMIC) #methdec;
+
+classdecl : CLASS ID LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
+                       CLPAR methoddecl* CRPAR #classdec
+                           ;
+
 dec : VAR ID COLON type ASS exp SEMIC  #vardec
     | FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR 
         	(LET dec+ IN)? exp SEMIC   #fundec
     /***/
-    | CLASS ID LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
-            CLPAR (FUN ID COLON type LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR
-                (LET dec+ IN)? exp SEMIC)* CRPAR #classdec
     ;
 
 exp     : exp TIMES exp #times

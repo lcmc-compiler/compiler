@@ -134,11 +134,12 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		List<ParNode> parList = new ArrayList<>();
 		for (int i = 1; i < c.ID().size(); i++) {
 			ParNode p = new ParNode(c.ID(i).getText(),(TypeNode) visit(c.type(i)));
+			System.out.println("STAMPO: " + c.ID(i).getText());
 			p.setLine(c.ID(i).getSymbol().getLine());
 			parList.add(p);
 		}
 		List<FunNode> funList = new ArrayList<>();
-		for (DecContext dec : c.dec()) funList.add((FunNode) visit(dec));
+		for (MethoddeclContext dec : c.methoddecl()) funList.add((FunNode) visit(dec));
 		Node n = null;
 		if (c.ID().size()>0) {
 			n = new ClassNode(c.ID(0).getText(),parList,funList);
@@ -202,12 +203,13 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	public Node visitFundec(FundecContext c) {
 		if (print) printVarAndProdName(c);
 		List<ParNode> parList = new ArrayList<>();
-		for (int i = 1; i < c.ID().size(); i++) { 
+		for (int i = 1; i < c.ID().size(); i++) {
 			ParNode p = new ParNode(c.ID(i).getText(),(TypeNode) visit(c.type(i)));
 			p.setLine(c.ID(i).getSymbol().getLine());
 			parList.add(p);
 		}
 		List<DecNode> decList = new ArrayList<>();
+
 		for (DecContext dec : c.dec()) decList.add((DecNode) visit(dec));
 		Node n = null;
 		if (c.ID().size()>0) { //non-incomplete ST
