@@ -1,7 +1,15 @@
 let
-    class A(a:int, b:bool){
-        fun n:int(a:int) a+1 ;
-        fun m:bool(b:bool) !b ;
+    class A(a: int, b: bool) {
+        fun m:bool(x:int)
+            let
+                var y:bool = true;
+                var g:int = x+2;
+            in
+                !y
+            ;
+
+        fun m1:bool(b:bool) !b ;
+        fun m2:bool(b:bool) !b ;
     }
 in
     print (new A(5, true)) ;
