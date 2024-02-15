@@ -127,6 +127,56 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		n.setLine(c.AND().getSymbol().getLine());
 		return n;
 	}
+
+	@Override
+	public Node visitClassdec(ClassdecContext c) {
+		if (print) printVarAndProdName(c);
+		List<ParNode> parList = new ArrayList<>();
+		for (int i = 1; i < c.ID().size(); i++) {
+			ParNode p = new ParNode(c.ID(i).getText(),(TypeNode) visit(c.type(i)));
+			p.setLine(c.ID(i).getSymbol().getLine());
+			parList.add(p);
+		}
+		List<FunNode> funList = new ArrayList<>();
+		for (DecContext dec : c.dec()) funList.add((FunNode) visit(dec));
+		Node n = null;
+		if (c.ID().size()>0) {
+			n = new ClassNode(c.ID(0).getText(),parList,funList);
+			n.setLine(c.CLASS().getSymbol().getLine());
+		}
+		return n;
+	}
+
+	@Override
+	public Node visitNew(NewContext c) {
+		if (print) printVarAndProdName(c);
+		Node n = new NewNode(visit(c.exp()));
+		n.setLine(c.NEW().getSymbol().getLine());
+		return n;
+	}
+
+	@Override
+	public Node visitDot(DotContext c) {
+		if (print) printVarAndProdName(c);
+		Node n = new DotNode(visit(c.exp(0)), visit(c.exp(1)));
+		n.setLine(c.DOT().getSymbol().getLine());
+		return n;
+	}
+
+	@Override
+	public Node visitNull(NullContext c) {
+		if (print) printVarAndProdName(c);
+		Node n = new NullNode();
+		n.setLine(c.NULL().getSymbol().getLine());
+		return n;
+	}
+
+	@Override
+	public Node visitIdType(IdTypeContext c) {
+		if (print) printVarAndProdName(c);
+		return new IntTypeNode();
+	}
+
 	/***/
 
 	@Override

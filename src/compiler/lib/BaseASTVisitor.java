@@ -67,15 +67,18 @@ public class BaseASTVisitor<S,E extends Exception> {
 	public S visitNode(BoolTypeNode n) throws E {throw new UnimplException();}
 	public S visitNode(IntTypeNode n) throws E {throw new UnimplException();}
 	/***/
-	public S visitNode(LesseqNode lesseqNode) throws E {throw new UnimplException();}
-	public S visitNode(GreqNode greqNode) throws E {throw new UnimplException();}
+	public S visitNode(LesseqNode n) throws E {throw new UnimplException();}
+	public S visitNode(GreqNode n) throws E {throw new UnimplException();}
+	public S visitNode(OrNode n) throws E {throw new UnimplException();}
+	public S visitNode(AndNode n) throws E {throw new UnimplException();}
+	public S visitNode(DivNode n) throws E {throw new UnimplException();}
 
-	public S visitNode(OrNode orNode) throws E {throw new UnimplException();}
-	public S visitNode(AndNode andNode) throws E {throw new UnimplException();}
-
-	public S visitNode(DivNode divNode) throws E {throw new UnimplException();}
-
-	public S visitNode(MinusNode minusNode) throws E {throw new UnimplException();}
+	public S visitNode(MinusNode n) throws E {throw new UnimplException();}
 
 	public S visitNode(NotNode notNode) throws E {throw new UnimplException();}
+	public S visitNode(NullNode nullNode) throws E {throw new UnimplException();}
+	public S visitNode(NewNode newNode) throws E {throw new UnimplException();}
+	public S visitNode(DotNode dotNode) throws E {throw new UnimplException();}
+	public S visitNode(IdTypeNode idTypeNode) throws E {throw new UnimplException();}
+	public S visitNode(ClassNode classNode) throws E {throw new UnimplException();}
 }
