@@ -57,6 +57,8 @@ public class AST {
 	}
 
 	public static class MethodNode extends FunNode {
+
+		int offset;
 		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
             super(i, rt, pl, dl, e);
 		}
@@ -132,12 +134,12 @@ public class AST {
 	/***/
 	public static class ClassNode extends DecNode {
 		final String id;
-		final List<FieldNode> parlist;
-		final List<MethodNode> funlist;
+		final List<FieldNode> fieldlist;
+		final List<MethodNode> methodlist;
 		ClassNode(String i, List<FieldNode> pl, List<MethodNode> fl) {
 			id=i;
-			parlist=Collections.unmodifiableList(pl);
-			funlist=Collections.unmodifiableList(fl);
+			fieldlist =Collections.unmodifiableList(pl);
+			methodlist=Collections.unmodifiableList(fl);
 		}
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
@@ -318,6 +320,22 @@ public class AST {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
+
+	public static class ClassTypeNode extends TypeNode {
+
+		ArrayList<TypeNode> allFields;
+		ArrayList<ArrowTypeNode> allMethods;
+
+		public ClassTypeNode(ArrayList<TypeNode> allFields, ArrayList<ArrowTypeNode> allMethods) {
+			this.allFields = allFields;
+			this.allMethods = allMethods;
+		}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+
+
 
 	/** TODO da ricontrollare */
 	public static class EmptyTypeNode extends TypeNode {
