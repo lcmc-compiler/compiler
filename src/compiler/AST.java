@@ -7,9 +7,11 @@ public class AST {
 	
 	public static class ProgLetInNode extends Node {
 		final List<DecNode> declist;
+		final List<ClassNode> classlist;
 		final Node exp;
-		ProgLetInNode(List<DecNode> d, Node e) {
-			declist = Collections.unmodifiableList(d); 
+		ProgLetInNode(List<DecNode> d, List<ClassNode> c, Node e) {
+			declist = Collections.unmodifiableList(d);
+			classlist = Collections.unmodifiableList(c);
 			exp = e;
 		}
 
@@ -209,6 +211,8 @@ public class AST {
 	public static class NewNode extends Node {
 		final String id;
 		final List<Node> arglist;
+		STentry entry;
+		int nl;
 
 		public NewNode(String idNode, List<Node> arglist) {
 			this.id = idNode;

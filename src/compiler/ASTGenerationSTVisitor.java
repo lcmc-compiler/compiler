@@ -49,7 +49,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		for (DecContext dec : c.dec()) declist.add((DecNode) visit(dec));
 		List<ClassNode> classlist = new ArrayList<>();
 		for (ClassdecContext dec : c.classdec()) classlist.add((ClassNode) visit(dec));
-		return new ProgLetInNode(declist, visit(c.exp()));
+		return new ProgLetInNode(declist, classlist, visit(c.exp()));
 	}
 
 	@Override

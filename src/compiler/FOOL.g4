@@ -10,7 +10,7 @@ public int lexicalErrors=0;
   
 prog  : progbody EOF ;
      
-progbody : LET (classdec+ | dec*) IN exp SEMIC  #letInProg
+progbody : LET (classdec | dec)* IN exp SEMIC  #letInProg
          | exp SEMIC              #noDecProg
          ;
 
