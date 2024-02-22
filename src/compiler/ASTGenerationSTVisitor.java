@@ -170,9 +170,19 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	}
 
 	@Override
+	public Node visitRefType(RefTypeContext c) {
+		if (print) printVarAndProdName(c);
+		Node n = new RefTypeNode(c.ID().getText());
+		n.setLine(c.ID().getSymbol().getLine());
+		return n;
+	}
+
+	@Override
 	public Node visitNew(NewContext c) {
 		if (print) printVarAndProdName(c);
-		Node n = new NewNode(visit(c.exp()));
+		List<Node> arglist = new ArrayList<>();
+		for (ExpContext arg : c.exp()) arglist.add(visit(arg));
+		Node n = new NewNode(c.ID().getText(), arglist);
 		n.setLine(c.NEW().getSymbol().getLine());
 		return n;
 	}
@@ -180,7 +190,9 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	@Override
 	public Node visitDot(DotContext c) {
 		if (print) printVarAndProdName(c);
-		Node n = new ClassCallNode(visit(c.exp(0)), visit(c.exp(1)));
+		List<Node> arglist = new ArrayList<>();
+		for (ExpContext arg : c.exp()) arglist.add(visit(arg));
+		Node n = new ClassCallNode(c.ID(0).getText(), c.ID(1).getText(), arglist);
 		n.setLine(c.DOT().getSymbol().getLine());
 		return n;
 	}
@@ -191,12 +203,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		Node n = new EmptyNode();
 		n.setLine(c.NULL().getSymbol().getLine());
 		return n;
-	}
-
-	@Override
-	public Node visitIdType(IdTypeContext c) {
-		if (print) printVarAndProdName(c);
-		return new IntTypeNode();
 	}
 
 	/***/

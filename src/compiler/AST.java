@@ -207,16 +207,31 @@ public class AST {
 	}
 
 	public static class NewNode extends Node {
-		final Node node;
-		NewNode(Node n) {node = n;}
+		final String id;
+		final List<Node> arglist;
+
+		public NewNode(String idNode, List<Node> arglist) {
+			this.id = idNode;
+			this.arglist = arglist;
+		}
 
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 	public static class ClassCallNode extends Node {
-		final Node left;
-		final Node right;
-		ClassCallNode(Node l, Node r) {left = l; right = r;}
+
+		final String id;
+		final String idMethod;
+		final List<Node> arglist;
+		STentry entry;
+		STentry methodEntry;
+		int nl;
+
+		public ClassCallNode(String id, String method, List<Node> p) {
+			this.id = id;
+			this.idMethod = method;
+			this.arglist = p;
+		}
 
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
@@ -288,18 +303,11 @@ public class AST {
 	}
 
 	/***/
-	public static class IdTypeNode extends TypeNode {
-
-		@Override
-		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
-	}
-
-	/***/
 	public static class RefTypeNode extends TypeNode {
 
-		final IdNode classId;
+		final String classId;
 
-		RefTypeNode(IdNode classId) {
+		RefTypeNode(String classId) {
 			this.classId = classId;
 		}
 

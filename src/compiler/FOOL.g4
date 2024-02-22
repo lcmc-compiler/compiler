@@ -40,8 +40,8 @@ exp     : exp TIMES exp #times
         | exp MINUS exp #minus
             //TODO
         | NULL #null
-        | NEW exp #new
-        | exp DOT exp #dot
+        | NEW ID LPAR (exp (COMMA exp)* )? RPAR #new
+        | ID DOT ID LPAR (exp (COMMA exp)* )? RPAR #dot
     	    /***/
 	    | TRUE #true     
 	    | FALSE #false
@@ -54,7 +54,7 @@ exp     : exp TIMES exp #times
 type    : INT #intType
         | BOOL #boolType
         /***/
-        | ID #idType
+        | ID #refType
  	    ;  
  	  		  
 /*------------------------------------------------------------------

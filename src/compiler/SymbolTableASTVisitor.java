@@ -165,6 +165,27 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	}
 
 	@Override
+	public Void visitNode(ClassCallNode n) throws VoidException {
+		if (print) printNode(n);
+
+		STentry entry = stLookup(n.id);
+		if (entry == null) {
+			System.out.println("Var id " + n.id + " at line "+ n.getLine() + " not declared");
+			stErrors++;
+		} else {
+			n.entry = entry;
+		}
+
+		// ci serve il RefTypeNode
+		STentry methodEntry = classTable.get("id classe").get(n.idMethod);
+
+		n.nl = nestingLevel;
+		for (Node arg : n.arglist) visit(arg);
+
+		return null;
+	}
+
+	@Override
 	public Void visitNode(VarNode n) {
 		if (print) printNode(n);
 		visit(n.exp);
