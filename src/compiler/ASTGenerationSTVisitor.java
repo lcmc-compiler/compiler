@@ -1,6 +1,7 @@
 package compiler;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -154,8 +155,10 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	public Node visitClassdec(ClassdecContext c) {
 		if (print) printVarAndProdName(c);
 		List<FieldNode> fieldList = new ArrayList<>();
-		for (int i = 0; i < c.ID().size(); i++) {
-			FieldNode p = new FieldNode(c.ID(i).getText(),(TypeNode) visit(c.type(i)));
+		// navigo tutti i campi da indice 1 (tralasciando quindi l'ID della classe) e cerco il tipo di indice i - 1 dato
+		// che l'indice del primo tipo del primo campo è 0, scalato di 1 dalla lista dei campi
+		for (int i = 1; i < c.ID().size(); i++) {
+			FieldNode p = new FieldNode(c.ID(i).getText(),(TypeNode) visit(c.type(i - 1)));
 			p.setLine(c.ID(i).getSymbol().getLine());
 			fieldList.add(p);
 		}

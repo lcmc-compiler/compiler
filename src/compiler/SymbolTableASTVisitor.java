@@ -111,12 +111,12 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		int fieldOffset=-1;
 		// visita di tutti i campi dichiarati per la classe, in modo da verificare che non ci siano conflitti di dichiarazioni già esistenti
 		for (FieldNode field : n.fieldlist) {
-			if (virtualTable.put(field.id, new STentry(nestingLevel, field.getType(), fieldOffset++)) != null) {
+			if (virtualTable.put(field.id, new STentry(nestingLevel, field.getType(), fieldOffset--)) != null) {
 				System.out.println("Field id " + field.id + " at line " + n.getLine() + " already declared");
 				stErrors++;
 			}
 			// aggiorno la lista fields relativa al ClassTypeNode
-			fields.add(fieldOffset, field.getType());
+			fields.add(field.getType());
 		}
 
 		// visita di tutti i metodi dichiarati all'interno della classe
@@ -181,7 +181,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		// ci serve il RefTypeNode
 		System.out.println("(CLASSCALLNODE) ID var: " + n.id + " - Type var: " + ((RefTypeNode)entry.type).classId);
 		STentry methodEntry = classTable.get(entry.type).get(n.idMethod);
-
+		n.methodEntry = methodEntry;
 		n.nl = nestingLevel;
 		for (Node arg : n.arglist) visit(arg);
 
@@ -278,6 +278,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	public Void visitNode(IdNode n) {
 		if (print) printNode(n);
 		STentry entry = stLookup(n.id);
+		System.out.println(entry.type);
+		System.out.println(entry.offset);
+
 		if (entry == null) {
 			System.out.println("Var or Par id " + n.id + " at line "+ n.getLine() + " not declared");
 			stErrors++;
