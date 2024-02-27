@@ -5,11 +5,20 @@ let
                 var y:bool = true;
                 var g:int = x+2;
             in
-                !y
+                !a + !a
             ;
 
         fun m1:bool(b:bool) !b ;
         fun m2:bool(b:bool) !b ;
     }
+    class B() {
+        fun m:bool(b:bool) b ;
+    }
+    var z:A = new A(5, true);
+    var m: int = 2;
+    var e:A = new A(6, true);
+    var r:A = new A(7, false);
+    var q:A = new B();
+
 in
-    print (new A(5, true)) ;
+    print (z) ;

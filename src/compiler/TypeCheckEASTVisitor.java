@@ -3,6 +3,9 @@ package compiler;
 import compiler.AST.*;
 import compiler.exc.*;
 import compiler.lib.*;
+
+import java.sql.Ref;
+
 import static compiler.TypeRels.*;
 
 //visitNode(n) fa il type checking di un Node n e ritorna:
@@ -66,7 +69,16 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	@Override
 	public TypeNode visitNode(VarNode n) throws TypeException {
 		if (print) printNode(n,n.id);
-		if ( !isSubtype(visit(n.exp),ckvisit(n.getType())) )
+
+		TypeNode t1 =  ckvisit(n.getType());
+		TypeNode t2 = visit(n.exp);
+
+		if(t1 instanceof RefTypeNode && t2 instanceof RefTypeNode) {
+			if ( !isSameClass((RefTypeNode)t2,(RefTypeNode) t1) )
+				throw new TypeException("Incompatible class for variable " + n.id,n.getLine());
+		}
+
+		if ( !isSubtype(t2,ckvisit(n.getType())) )
 			throw new TypeException("Incompatible value for variable " + n.id,n.getLine());
 		return null;
 	}
