@@ -35,10 +35,10 @@ public class Test {
     	System.out.println("Visualizing Enriched AST.");
     	new PrintEASTVisitor().visit(ast);
     	System.out.println("");
-		/*
+
     	System.out.println("Checking Types.");
     	try {
-    		TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor();
+    		TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor(true);
     		TypeNode mainType = typeCheckVisitor.visit(ast);
     		System.out.print("Type of main program expression is: ");
     		new PrintEASTVisitor().visit(mainType);
@@ -53,7 +53,7 @@ public class Test {
 		System.out.println("You had a total of "+frontEndErrors+" front-end errors.\n");
 		
 		if ( frontEndErrors > 0) System.exit(1);   
-
+		/*
     	System.out.println("Generating code.");
     	String code = new CodeGenerationASTVisitor().visit(ast);        
     	BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm")); 

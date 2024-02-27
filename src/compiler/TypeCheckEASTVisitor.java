@@ -21,10 +21,15 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		visit(t);
 		return t;
 	} 
-	
+
 	@Override
 	public TypeNode visitNode(ProgLetInNode n) throws TypeException {
 		if (print) printNode(n);
+		for (Node cl : n.classlist)
+			try {
+				visit(cl);
+			} catch (IncomplException e) {
+			}
 		for (Node dec : n.declist)
 			try {
 				visit(dec);
@@ -40,6 +45,8 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		if (print) printNode(n);
 		return visit(n.exp);
 	}
+
+
 
 	@Override
 	public TypeNode visitNode(FunNode n) throws TypeException {
@@ -137,6 +144,14 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 				&& isSubtype(visit(n.right), new IntTypeNode())) )
 			throw new TypeException("Non integers in sum",n.getLine());
 		return new IntTypeNode();
+	}
+
+	@Override
+	public TypeNode visitNode(NotNode n) throws TypeException {
+		if (print) printNode(n);
+		if ( !(isSubtype(visit(n.node), new BoolTypeNode())))
+			throw new TypeException("Non boolean in not",n.getLine());
+		return new BoolTypeNode();
 	}
 
 	@Override
@@ -244,8 +259,34 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		return null;
 	}
 
+
+
+	@Override
+	public TypeNode visitNode(RefTypeNode n) throws TypeException {
+		if (print) printNode(n);
+		return null;
+	}
+
 	@Override
 	public TypeNode visitNode(IntTypeNode n) {
+		if (print) printNode(n);
+		return null;
+	}
+
+	@Override
+	public TypeNode visitNode(MethodTypeNode n) throws TypeException {
+		if (print) printNode(n);
+		return null;
+	}
+
+	@Override
+	public TypeNode visitNode(ClassTypeNode n) throws TypeException {
+		if (print) printNode(n);
+		return null;
+	}
+
+	@Override
+	public TypeNode visitNode(EmptyTypeNode n) throws TypeException {
 		if (print) printNode(n);
 		return null;
 	}
