@@ -337,9 +337,9 @@ public class AST {
 	public static class ClassTypeNode extends TypeNode {
 
 		ArrayList<TypeNode> allFields;
-		ArrayList<ArrowTypeNode> allMethods;
+		ArrayList<MethodTypeNode> allMethods;
 
-		public ClassTypeNode(ArrayList<TypeNode> allFields, ArrayList<ArrowTypeNode> allMethods) {
+		public ClassTypeNode(ArrayList<TypeNode> allFields, ArrayList<MethodTypeNode> allMethods) {
 			this.allFields = allFields;
 			this.allMethods = allMethods;
 		}

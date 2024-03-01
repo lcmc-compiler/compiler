@@ -192,13 +192,13 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	@Override
 	public TypeNode visitNode(ClassCallNode n) throws TypeException {
 		if (print) printNode(n,n.id);
-		TypeNode t = visit(n.entry);
+		TypeNode t = visit(n.methodEntry);
 		ArrowTypeNode at;
 
 		if(t instanceof MethodTypeNode)
 			at = ((MethodTypeNode) t).fun;
 		else
-			throw new TypeException("Invocation of a non-method "+n.id,n.getLine());
+			throw new TypeException("Invocation of a non-method "+n.idMethod,n.getLine());
 
 		if ( !(at.parlist.size() == n.arglist.size()) )
 			throw new TypeException("Wrong number of parameters in the invocation of "+n.id,n.getLine());

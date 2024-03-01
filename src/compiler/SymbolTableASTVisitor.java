@@ -85,7 +85,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		System.out.println("VISITO CLASSE " + n.id);
 		Map<String, STentry> hm = symTable.get(nestingLevel);
 		ArrayList<TypeNode> fields = new ArrayList<>();
-		ArrayList<ArrowTypeNode> methods = new ArrayList<>();
+		ArrayList<MethodTypeNode> methods = new ArrayList<>();
 
 		ClassTypeNode classTypeNode = new ClassTypeNode(fields, methods);
 
@@ -123,7 +123,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		for (MethodNode method : n.methodlist) {
 			visit(method);
 			// aggiorno la lista methods relativa al ClassTypeNode
-			methods.add(method.offset, new ArrowTypeNode(method.parlist.stream().map(DecNode::getType).collect(Collectors.toList()), method.retType));
+			methods.add(method.offset, new MethodTypeNode(
+					new ArrowTypeNode(method.parlist.stream().map(DecNode::getType).collect(Collectors.toList()), method.retType)
+			));
 		}
 
 		//rimuovere la hashmap corrente poiche' esco dallo scope
@@ -139,7 +141,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		List<TypeNode> parTypes = new ArrayList<>();
 		for (ParNode par : n.parlist) parTypes.add(par.getType());
 		n.offset = decOffset;
-		STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes,n.retType),decOffset++);
+		STentry entry = new STentry(nestingLevel, new MethodTypeNode(new ArrowTypeNode(parTypes,n.retType)),decOffset++);
 		//inserimento di ID nella symtable
 		if (hm.put(n.id, entry) != null) {
 			System.out.println("Fun id " + n.id + " at line "+ n.getLine() +" already declared");
@@ -179,8 +181,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		}
 
 		// ci serve il RefTypeNode
-		System.out.println("(CLASSCALLNODE) ID var: " + n.id + " - Type var: " + ((RefTypeNode)entry.type).classId);
-		STentry methodEntry = classTable.get(entry.type).get(n.idMethod);
+		String classId = ((RefTypeNode)entry.type).classId;
+		System.out.println("(CLASSCALLNODE) ID var: " + n.id + " - Type var: " + classId);
+		System.out.println("ID METHOD: " + n.idMethod);
+		STentry methodEntry = classTable.get(classId).get(n.idMethod);
 		n.methodEntry = methodEntry;
 		n.nl = nestingLevel;
 		for (Node arg : n.arglist) visit(arg);
