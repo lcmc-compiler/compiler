@@ -120,10 +120,17 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		}
 
 		// visita di tutti i metodi dichiarati all'interno della classe
+		// TODO l'errore è qui da qualche parte
 		for (MethodNode method : n.methodlist) {
 			visit(method);
+			/*if (virtualTable.put(method.id, new STentry(nestingLevel, method.getType(), decOffset)) != null) {
+				System.out.println("Method id " + method.id + " at line " + n.getLine() + " already declared");
+				stErrors++;
+			}*/
+			method.offset = decOffset;
+			decOffset++;
 			// aggiorno la lista methods relativa al ClassTypeNode
-			methods.add(method.offset, new MethodTypeNode(
+			methods.add(new MethodTypeNode(
 					new ArrowTypeNode(method.parlist.stream().map(DecNode::getType).collect(Collectors.toList()), method.retType)
 			));
 		}
@@ -144,7 +151,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		STentry entry = new STentry(nestingLevel, new MethodTypeNode(new ArrowTypeNode(parTypes,n.retType)),decOffset++);
 		//inserimento di ID nella symtable
 		if (hm.put(n.id, entry) != null) {
-			System.out.println("Fun id " + n.id + " at line "+ n.getLine() +" already declared");
+			System.out.println("Method id " + n.id + " at line "+ n.getLine() +" already declared");
 			stErrors++;
 		}
 		//creare una nuova hashmap per la symTable
@@ -152,11 +159,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		Map<String, STentry> hmn = new HashMap<>();
 		symTable.add(hmn);
 		int prevNLDecOffset=decOffset; // stores counter for offset of declarations at previous nesting level
-		decOffset=-2;
+		decOffset=1; // non -2
 
-		int parOffset=1;
 		for (ParNode par : n.parlist)
-			if (hmn.put(par.id, new STentry(nestingLevel,par.getType(),parOffset++)) != null) {
+			if (hmn.put(par.id, new STentry(nestingLevel,par.getType(),decOffset++)) != null) {
 				System.out.println("Par id " + par.id + " at line "+ n.getLine() +" already declared");
 				stErrors++;
 			}
@@ -176,8 +182,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		if (entry == null) {
 			System.out.println("Var id " + n.id + " at line "+ n.getLine() + " not declared");
 			stErrors++;
+			return null;
 		} else {
 			n.entry = entry;
+			n.nl = nestingLevel;
 		}
 
 		// ci serve il RefTypeNode
@@ -186,7 +194,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		System.out.println("ID METHOD: " + n.idMethod);
 		STentry methodEntry = classTable.get(classId).get(n.idMethod);
 		n.methodEntry = methodEntry;
-		n.nl = nestingLevel;
+
 		for (Node arg : n.arglist) visit(arg);
 
 		return null;
@@ -238,7 +246,61 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		visit(n.el);
 		return null;
 	}
-	
+
+	@Override
+	public Void visitNode(EmptyNode n) throws VoidException {
+		if (print) printNode(n);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(LesseqNode n) throws VoidException {
+		if (print) printNode(n);
+		visit(n.left);
+		visit(n.right);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(GreqNode n) throws VoidException {
+		if (print) printNode(n);
+		visit(n.left);
+		visit(n.right);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(OrNode n) throws VoidException {
+		if (print) printNode(n);
+		visit(n.left);
+		visit(n.right);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(AndNode n) throws VoidException {
+		if (print) printNode(n);
+		visit(n.left);
+		visit(n.right);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(DivNode n) throws VoidException {
+		if (print) printNode(n);
+		visit(n.left);
+		visit(n.right);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(MinusNode n) throws VoidException {
+		if (print) printNode(n);
+		visit(n.left);
+		visit(n.right);
+		return null;
+	}
+
 	@Override
 	public Void visitNode(EqualNode n) {
 		if (print) printNode(n);

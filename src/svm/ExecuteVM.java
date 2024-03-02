@@ -22,6 +22,8 @@ public class ExecuteVM {
     public void cpu() {
       while ( true ) {
         int bytecode = code[ip++]; // fetch
+          //System.out.println("Address to fetch: " + (ip - 1));
+          //System.out.println("Bytecode: " + bytecode);
         int v1,v2;
         int address;
         switch ( bytecode ) {
@@ -56,7 +58,9 @@ public class ExecuteVM {
             memory[address] = pop();    
             break;
           case SVMParser.LOADW : //
-            push(memory[pop()]);
+            address = pop();
+            //System.out.println("STO POPPANDO " + address);
+            push(memory[address]);
             break;
           case SVMParser.BRANCH : 
             address = code[ip];
