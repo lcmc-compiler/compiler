@@ -17,4 +17,4 @@ let
     var z:A = new A(5, true);
 
 in
-    print (z.m(3)) ;
+    print (z.m(3) || true) ;

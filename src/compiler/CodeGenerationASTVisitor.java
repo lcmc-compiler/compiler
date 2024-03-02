@@ -60,22 +60,63 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 	@Override
 	public String visitNode(OrNode n) throws VoidException {
-		return super.visitNode(n);
+		if (print) printNode(n);
+		/*String left = visit(n.left);
+		String right = visit(n.right);
+		String result = "0";
+		if(left.equals("1"))
+			result = "1";
+		else if(right.equals("1"))
+			result = "1";
+		*/
+		String label1 = freshLabel();
+		String label2 = freshLabel();
+
+		/*return nlJoin(
+				"push " + result
+		);*/
+		return nlJoin(
+				visit(n.right),
+				visit(n.left),
+				"bleq " + label1,
+				visit(n.right),
+				"b " + label2,
+				label1 + ":",
+				visit(n.left),
+				label2 + ":"
+
+		);
 	}
 
 	@Override
 	public String visitNode(AndNode n) throws VoidException {
-		return super.visitNode(n);
+		if (print) printNode(n);
+
+		return nlJoin(
+				visit(n.left),
+				visit(n.right),
+				"mult"
+		);
 	}
 
 	@Override
 	public String visitNode(DivNode n) throws VoidException {
-		return super.visitNode(n);
+		if (print) printNode(n);
+		return nlJoin(
+				visit(n.left),
+				visit(n.right),
+				"div"
+		);
 	}
 
 	@Override
 	public String visitNode(MinusNode n) throws VoidException {
-		return super.visitNode(n);
+		if (print) printNode(n);
+		return nlJoin(
+				visit(n.left),
+				visit(n.right),
+				"sub"
+		);
 	}
 
 	@Override
