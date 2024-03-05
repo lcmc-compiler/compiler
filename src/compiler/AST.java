@@ -41,8 +41,6 @@ public class AST {
 	    	exp=e;
 	    }
 		
-		//void setType(TypeNode t) {type = t;}
-		
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
@@ -51,8 +49,6 @@ public class AST {
 		FieldNode(String i, TypeNode t) {
 			super(i, t);
 		}
-
-		//void setType(TypeNode t) {type = t;}
 
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
@@ -65,8 +61,6 @@ public class AST {
 		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
             super(i, rt, pl, dl, e);
 		}
-
-		//void setType(TypeNode t) {type = t;}
 
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
@@ -203,7 +197,7 @@ public class AST {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
-	public static class EmptyNode extends Node { //TODO nodo NULL
+	public static class EmptyNode extends Node {
 
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
@@ -348,9 +342,6 @@ public class AST {
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
-
-
-	/** TODO da ricontrollare */
 	public static class EmptyTypeNode extends TypeNode {
 
 		@Override

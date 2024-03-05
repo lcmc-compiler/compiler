@@ -145,7 +145,6 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void,VoidException> {
 		return null;
 	}
 
-	/***/
 	@Override
 	public Void visitNode(LesseqNode n) throws VoidException {
 		printNode(n);
@@ -200,8 +199,6 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void,VoidException> {
 		visit(n.node);
 		return null;
 	}
-
-
 
 	@Override
 	public Void visitNode(EmptyNode n) throws VoidException {

@@ -14,7 +14,7 @@ public class TypeRels {
 				((a instanceof BoolTypeNode) && (b instanceof IntTypeNode)) ||
 				((a instanceof EmptyTypeNode) && (b instanceof RefTypeNode));
 	}
-
+	// metodo dedicato per controllare che due riferimenti siano relativi a due classi uguali, con lo stesso id
 	public static boolean isSameClass(RefTypeNode a, RefTypeNode b) {
 		return Objects.equals(a.classId, b.classId);
 	}

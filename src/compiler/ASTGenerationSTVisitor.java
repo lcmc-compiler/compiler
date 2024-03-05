@@ -63,7 +63,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	public Node visitTimes(TimesContext c) {
 		if (print) printVarAndProdName(c);
 		Node n = new TimesNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.TIMES().getSymbol().getLine());		// setLine added
+		n.setLine(c.TIMES().getSymbol().getLine());
         return n;		
 	}
 

@@ -15,8 +15,6 @@ import static svm.ExecuteVM.MEMSIZE;
 
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
 
-	//List<String> dispatchTables = new ArrayList<>();
-
   CodeGenerationASTVisitor() {}
   CodeGenerationASTVisitor(boolean debug) {super(false,debug);} //enables print for debugging
 
@@ -30,9 +28,9 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		return nlJoin(
 			"push 0",
 			classCode,
-			//"/* end class code */",
+			"/* end class code */",
 			declCode, // generate code for declarations (allocation)
-			//"/* end decl code */",
+			"/* end decl code */",
 			visit(n.exp),
 			"halt",
 			getCode()
@@ -53,11 +51,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		String l1 = freshLabel();
 		String l2 = freshLabel();
 		return nlJoin(
-				visit(n.left),
-				visit(n.right),
-				"bleq " + l1,
-				"push 0",
-				"b " + l2,
+				visit(n.left), // push del primo elemento da controllare
+				visit(n.right), // push del secondo elemento
+				"bleq " + l1, // se il secondo è <= del primo vado in l1 perché metto in stack true (left <= right)
+				"push 0", // altrimenti metto in stack false
+				"b " + l2, // salto incondizionato su l2 per saltare l1
 				l1 + ":",
 				"push 1",
 				l2 + ":"
@@ -70,20 +68,20 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		String l2 = freshLabel();
 		String l3 = freshLabel();
 		return nlJoin(
-				visit(n.left),
+				visit(n.left), // pusho l'elemento sinistro
+				visit(n.right), // pusho l'elemento destro
+				"beq " + l1, // controllo che left == right: in caso positivo salto in l1
+
+				visit(n.left), // altrimenti rimetto gli operandi sullo stack
 				visit(n.right),
-				"beq " + l1,
+				"bleq " + l2, // se left <= right salto a l2
 
-				visit(n.left),
-				visit(n.right),
-				"bleq " + l2,
+				l1 + ":",
+				"push 1", // altrimenti metto in stack true (left >= right)
+				"b " + l3, // salto incondizionato su l3
 
-				l1 + ":", // uguale
-				"push 1",
-				"b " + l3,
-
-				l2 + ":", // minore
-				"push 0",
+				l2 + ":",
+				"push 0", // metto false, left non è maggiore o uguale di right
 
 				l3 + ":"
 		);
@@ -92,28 +90,17 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	@Override
 	public String visitNode(OrNode n) throws VoidException {
 		if (print) printNode(n);
-		/*String left = visit(n.left);
-		String right = visit(n.right);
-		String result = "0";
-		if(left.equals("1"))
-			result = "1";
-		else if(right.equals("1"))
-			result = "1";
-		*/
 		String label1 = freshLabel();
 		String label2 = freshLabel();
 
-		/*return nlJoin(
-				"push " + result
-		);*/
 		return nlJoin(
-				visit(n.right),
+				visit(n.right), // pusho gli operandi
 				visit(n.left),
-				"bleq " + label1,
-				visit(n.right),
+				"bleq " + label1, // se left <= right significa che comanda l'operando sinistro
+				visit(n.right), // altrimenti comanda l'operando destro
 				"b " + label2,
 				label1 + ":",
-				visit(n.left),
+				visit(n.left), // se left e true metto true in stack, altrimenti false
 				label2 + ":"
 		);
 	}
@@ -125,7 +112,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		return nlJoin(
 				visit(n.left),
 				visit(n.right),
-				"mult"
+				"mult" // and come moltiplicazione dei due operandi (0 o 1)
 		);
 	}
 
@@ -135,7 +122,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		return nlJoin(
 				visit(n.left),
 				visit(n.right),
-				"div"
+				"div" // divisione
 		);
 	}
 
@@ -145,7 +132,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		return nlJoin(
 				visit(n.left),
 				visit(n.right),
-				"sub"
+				"sub" // sottrazione
 		);
 	}
 
@@ -191,7 +178,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		for (int i=0;i<n.parlist.size();i++) popParl = nlJoin(popParl,"pop");
 		putCode(
 				nlJoin(
-						//"/* method " + n.id + " declaration */",
+						"/* method " + n.id + " declaration */",
 						n.label+":",
 						"cfp", // set $fp to $sp value
 						"lra", // load $ra value
@@ -250,7 +237,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		}
 
 		return nlJoin(
-				//"/* class " + n.id + " declaration */",
+				"/* class " + n.id + " declaration */",
 				"lhp", // push the content of hp register to the top of the stack
 				labels
 		);
@@ -270,7 +257,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		for (int i=n.arglist.size()-1;i>=0;i--) argCode=nlJoin(argCode,visit(n.arglist.get(i)));
 		for (int i = 0;i<n.nl-n.entry.nl;i++) getAR=nlJoin(getAR,"lw");
 		return nlJoin(
-				//"/* method " + n.idMethod + " recall */",
+				"/* method " + n.idMethod + " recall */",
 				"lfp", // load Control Link (pointer to frame of function "id" caller)
 				argCode, // generate code for argument expressions in reversed order
 				"lfp", getAR, // retrieve address of frame containing "id" declaration
@@ -284,7 +271,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				"ltm", // duplicate top of stack
 				"lw",
 
-				// TODO l'errore è qui: dopo lw cerca in indirizzo -1
 				"push "+n.methodEntry.offset,
 				"add", // compute address of "id" declaration
 				"lw", // load address of "id" function
@@ -320,14 +306,13 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				pushOnHeapCode,
 				"push " + MEMSIZE,
 				"push " + n.entry.offset,
-				"add",
+				"add", // calcolo dispatch pointer
 				"lw",
 
-
 				"lhp",
-				"sw",
+				"sw", // scrivo il dispatch pointer nell'indirizzo contenuto in hp
 
-				"lhp",
+				"lhp", // carico object pointer da ritornare
 
 				"lhp", // pusho hp per eseguire la somma con 1
 				"push 1", // pusho 1 per incrementare hp
@@ -360,11 +345,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		return nlJoin(
 			visit(n.cond),
 			"push 1",
-			"beq "+l1,
-			visit(n.el),
-			"b "+l2,
+			"beq "+l1, // controllo che la condizione sia vera
+			visit(n.el), // visito il ramo else
+			"b "+l2, // salto sul then
 			l1+":",
-			visit(n.th),
+			visit(n.th), // visito il ramo then
 			l2+":"
 		);
 	}
@@ -377,7 +362,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		return nlJoin(
 			visit(n.left),
 			visit(n.right),
-			"beq "+l1,
+			"beq "+l1, // controllo che i due operandi siano uguali
 			"push 0",
 			"b "+l2,
 			l1+":",
@@ -392,7 +377,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		return nlJoin(
 			visit(n.left),
 			visit(n.right),
-			"mult"
+			"mult" // moltiplicazione
 		);	
 	}
 
@@ -402,7 +387,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		return nlJoin(
 			visit(n.left),
 			visit(n.right),
-			"add"				
+			"add" // somma
 		);
 	}
 
@@ -411,14 +396,13 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	@Override
 	public String visitNode(CallNode n) {
 		if (print) printNode(n,n.id);
-		TypeNode t = n.entry.type;
-		if(t instanceof MethodTypeNode) {
-			//offset = dispatchTables.get(n.entry.offset);
-		}
 		String argCode = null, getAR = null;
+
+		// pusho gli argomenti
 		for (int i=n.arglist.size()-1;i>=0;i--)
 			argCode=nlJoin(argCode,visit(n.arglist.get(i)));
 
+		// risalita degli AR
 		for (int i = 0;i<n.nl-n.entry.nl;i++)
 			getAR=nlJoin(getAR,"lw");
 
