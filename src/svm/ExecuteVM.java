@@ -21,9 +21,10 @@ public class ExecuteVM {
     
     public void cpu() {
       while ( true ) {
+        //System.out.println("Address to fetch: " + (ip));
         int bytecode = code[ip++]; // fetch
-          //System.out.println("Address to fetch: " + (ip - 1));
-          //System.out.println("Bytecode: " + bytecode);
+
+        //System.out.println("Bytecode: " + bytecode);
         int v1,v2;
         int address;
         switch ( bytecode ) {
@@ -79,7 +80,9 @@ public class ExecuteVM {
             if (v2 <= v1) ip = address;
             break;
           case SVMParser.JS : //
+            //System.out.println("STO SALTANDO");
             address = pop();
+            //System.out.println("HO POPPATO ADDRESS: " + address);
             ra = ip;
             ip = address;
             break;

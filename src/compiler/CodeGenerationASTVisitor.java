@@ -30,9 +30,9 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		return nlJoin(
 			"push 0",
 			classCode,
-			"/* end class code */",
+			//"/* end class code */",
 			declCode, // generate code for declarations (allocation)
-			"/* end decl code */",
+			//"/* end decl code */",
 			visit(n.exp),
 			"halt",
 			getCode()
@@ -50,12 +50,43 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 	@Override
 	public String visitNode(LesseqNode n) throws VoidException {
-		return super.visitNode(n);
+		String l1 = freshLabel();
+		String l2 = freshLabel();
+		return nlJoin(
+				visit(n.left),
+				visit(n.right),
+				"bleq " + l1,
+				"push 0",
+				"b " + l2,
+				l1 + ":",
+				"push 1",
+				l2 + ":"
+		);
 	}
 
 	@Override
 	public String visitNode(GreqNode n) throws VoidException {
-		return super.visitNode(n);
+		String l1 = freshLabel();
+		String l2 = freshLabel();
+		String l3 = freshLabel();
+		return nlJoin(
+				visit(n.left),
+				visit(n.right),
+				"beq " + l1,
+
+				visit(n.left),
+				visit(n.right),
+				"bleq " + l2,
+
+				l1 + ":", // uguale
+				"push 1",
+				"b " + l3,
+
+				l2 + ":", // minore
+				"push 0",
+
+				l3 + ":"
+		);
 	}
 
 	@Override
@@ -84,7 +115,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				label1 + ":",
 				visit(n.left),
 				label2 + ":"
-
 		);
 	}
 
@@ -159,11 +189,10 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			popDecl = nlJoin(popDecl,"pop");
 		}
 		for (int i=0;i<n.parlist.size();i++) popParl = nlJoin(popParl,"pop");
-		String funl = freshFunLabel();
-		n.label = funl;
 		putCode(
 				nlJoin(
-						funl+":",
+						//"/* method " + n.id + " declaration */",
+						n.label+":",
 						"cfp", // set $fp to $sp value
 						"lra", // load $ra value
 						declCode, // generate code for local declarations (they use the new $fp!!!)
@@ -201,13 +230,15 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		if (print) printNode(n,n.id);
 		ArrayList<String> dispatchTable = new ArrayList<>();
 		for(MethodNode method : n.methodlist) {
+			String freshLabel = freshFunLabel();
+			dispatchTable.add(freshLabel);
+			method.label = freshLabel;
 			visit(method);
-			dispatchTable.add(method.label);
 		}
-
-		String labels = "/* class " + n.id + " declaration */";
+		String labels = "";
 		for (String methodLabel : dispatchTable) {
 			labels = nlJoin(labels,
+					"/* method " + methodLabel + "*/",
 					"push " +methodLabel, // pusho la label sullo stack
 					"lhp", // pusho hp su stack
 					"sw", // poppo due valori: hp e label presenti su stack e memorizzo label in indirizzo presente in hp
@@ -219,6 +250,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		}
 
 		return nlJoin(
+				//"/* class " + n.id + " declaration */",
 				"lhp", // push the content of hp register to the top of the stack
 				labels
 		);
@@ -227,12 +259,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	@Override
 	public String visitNode(EmptyNode n) throws VoidException {
 		if (print) printNode(n);
-		putCode(
-				nlJoin(
-						"push -1"
-				)
-		);
-		return null;
+		return "push -1";
 	}
 
 	@Override
@@ -243,7 +270,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		for (int i=n.arglist.size()-1;i>=0;i--) argCode=nlJoin(argCode,visit(n.arglist.get(i)));
 		for (int i = 0;i<n.nl-n.entry.nl;i++) getAR=nlJoin(getAR,"lw");
 		return nlJoin(
-				"/* method " + n.id + " declaration */",
+				//"/* method " + n.idMethod + " recall */",
 				"lfp", // load Control Link (pointer to frame of function "id" caller)
 				argCode, // generate code for argument expressions in reversed order
 				"lfp", getAR, // retrieve address of frame containing "id" declaration
@@ -257,6 +284,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				"ltm", // duplicate top of stack
 				"lw",
 
+				// TODO l'errore è qui: dopo lw cerca in indirizzo -1
 				"push "+n.methodEntry.offset,
 				"add", // compute address of "id" declaration
 				"lw", // load address of "id" function
@@ -270,13 +298,16 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 		String argCode = null;
 		for (int i = 0; i < n.arglist.size(); i++)
-			argCode=nlJoin(argCode,visit(n.arglist.get(i)));
+			argCode=nlJoin(argCode,visit(n.arglist.get(i))
+					,"/* campo classe */"
+			);
 
 		String pushOnHeapCode = null;
 		for (int i=0;i<n.arglist.size();i++) {
 			pushOnHeapCode = nlJoin(pushOnHeapCode,
 					"lhp", // pusho hp su stack
 					"sw", // poppo due valori: hp e label presenti su stack e memorizzo label in indirizzo presente in hp
+
 					"lhp", // pusho 1 per incrementare hp
 					"push 1", // pusho hp per eseguire la somma con 1
 					"add", // poppo due valori e li sommo: hp + 1

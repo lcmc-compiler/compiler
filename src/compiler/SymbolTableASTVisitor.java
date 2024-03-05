@@ -128,7 +128,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 				stErrors++;
 			}*/
 			method.offset = decOffset;
-			decOffset++;
+
 			// aggiorno la lista methods relativa al ClassTypeNode
 			methods.add(new MethodTypeNode(
 					new ArrowTypeNode(method.parlist.stream().map(DecNode::getType).collect(Collectors.toList()), method.retType)
