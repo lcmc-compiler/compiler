@@ -3,12 +3,16 @@ let
     class Listtt (f:int, r:List) {
         fun first:int() 10;
         fun rest:List() r;
+        fun void:List() null;
     }
 
 	class List (f:int, r:List) {
 		fun first:int() f;
 		fun rest:List() r;
 	}
+
+	fun List:int() 90;
+
 	fun printList:List (l:List)
 	let
 		fun makeList:List (l:List, i:int) new List (i,l);

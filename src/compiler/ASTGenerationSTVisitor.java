@@ -74,7 +74,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		n.setLine(c.PLUS().getSymbol().getLine());	
         return n;		
 	}
-	/***/
+
 	@Override
 	public Node visitMinus(MinusContext c) {
 		if (print) printVarAndProdName(c);
@@ -208,8 +208,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		n.setLine(c.NULL().getSymbol().getLine());
 		return n;
 	}
-
-	/***/
 
 	@Override
 	public Node visitEq(EqContext c) {

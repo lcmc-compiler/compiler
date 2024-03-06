@@ -186,14 +186,10 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		TypeNode t = visit(n.entry);
 		ArrowTypeNode at;
 		// controllo che la chiamata sia relativa ad un metodo di una classe o di una funzione
-		if(t instanceof MethodTypeNode)
-			at = ((MethodTypeNode) t).fun;
-		else {
-			if ( !(t instanceof ArrowTypeNode) )
-				throw new TypeException("Invocation of a non-function "+n.id,n.getLine());
-			else
-				at = (ArrowTypeNode) t;
-		}
+		if ( !(t instanceof ArrowTypeNode) )
+			throw new TypeException("Invocation of a non-function "+n.id,n.getLine());
+		else
+			at = (ArrowTypeNode) t;
 
 		// controllo sul numero e sul tipo di parametri
 		if ( !(at.parlist.size() == n.arglist.size()) )
@@ -280,7 +276,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 
 		// verifico che la chiamata sia relativa ad un metodo
 		if(t instanceof MethodTypeNode)
-			at = ((MethodTypeNode) t).fun;
+			at = ((MethodTypeNode) t);
 		else
 			throw new TypeException("Invocation of a non-method "+n.idMethod,n.getLine());
 
