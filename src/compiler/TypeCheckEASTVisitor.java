@@ -174,7 +174,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	@Override
 	public TypeNode visitNode(NotNode n) throws TypeException {
 		if (print) printNode(n);
-		// verifico che i due operandi siano in relazione di subtyping col tipo booleano
+		// verifico che l'operando siano in relazione di subtyping col tipo booleano
 		if ( !(isSubtype(visit(n.node), new BoolTypeNode())))
 			throw new TypeException("Non boolean in not",n.getLine());
 		return new BoolTypeNode();
@@ -205,10 +205,10 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		if (print) printNode(n);
 		// verifico che i due operandi siano in relazione di subtyping col tipo intero
 		if ( !(isSubtype(visit(n.left), new IntTypeNode())))
-			throw new TypeException("Non boolean in lesseq, type is " + visit(n.left),n.getLine());
+			throw new TypeException("Non integers in lesseq, type is " + visit(n.left),n.getLine());
 		// verifico che i due operandi siano in relazione di subtyping col tipo intero
 		if ( !(isSubtype(visit(n.right), new IntTypeNode())))
-			throw new TypeException("Non boolean in lesseq, type is " + visit(n.right),n.getLine());
+			throw new TypeException("Non integers in lesseq, type is " + visit(n.right),n.getLine());
 		return new BoolTypeNode();
 	}
 
@@ -217,10 +217,10 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		if (print) printNode(n);
 		// verifico che i due operandi siano in relazione di subtyping col tipo intero
 		if ( !(isSubtype(visit(n.left), new IntTypeNode())))
-			throw new TypeException("Non boolean in greq",n.getLine());
+			throw new TypeException("Non integers in greq",n.getLine());
 		// verifico che i due operandi siano in relazione di subtyping col tipo intero
 		if ( !(isSubtype(visit(n.right), new IntTypeNode())))
-			throw new TypeException("Non boolean in greq",n.getLine());
+			throw new TypeException("Non integers in greq",n.getLine());
 		return new BoolTypeNode();
 	}
 
@@ -272,7 +272,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	public TypeNode visitNode(ClassCallNode n) throws TypeException {
 		if (print) printNode(n,n.id);
 		TypeNode t = visit(n.methodEntry);
-		ArrowTypeNode at;
+		MethodTypeNode at;
 
 		// verifico che la chiamata sia relativa ad un metodo
 		if(t instanceof MethodTypeNode)
@@ -281,12 +281,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 			throw new TypeException("Invocation of a non-method "+n.idMethod,n.getLine());
 
 		// controllo il numero e il tipo di parametri
-		if ( !(at.parlist.size() == n.arglist.size()) )
+		if ( !(at.fun.parlist.size() == n.arglist.size()) )
 			throw new TypeException("Wrong number of parameters in the invocation of "+n.id,n.getLine());
 		for (int i = 0; i < n.arglist.size(); i++)
-			if ( !(isSubtype(visit(n.arglist.get(i)),at.parlist.get(i))) )
+			if ( !(isSubtype(visit(n.arglist.get(i)),at.fun.parlist.get(i))) )
 				throw new TypeException("Wrong type for "+(i+1)+"-th parameter in the invocation of "+n.id,n.getLine());
-		return at.ret;
+		return at.fun.ret;
 	}
 
 	@Override
@@ -304,7 +304,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		if(t instanceof ClassTypeNode)
 			at = (ClassTypeNode) t;
 		else
-			throw new TypeException("Invocation of a non-method "+n.id,n.getLine());
+			throw new TypeException("Invocation of a non-class ID "+n.id,n.getLine());
 
 		// controllo che il numero e tipo di campi siano quelli previsti dalla classe
 		if ( !(at.allFields.size() == n.arglist.size()) )

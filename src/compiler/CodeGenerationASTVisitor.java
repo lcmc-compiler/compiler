@@ -53,7 +53,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		return nlJoin(
 				visit(n.left), // push del primo elemento da controllare
 				visit(n.right), // push del secondo elemento
-				"bleq " + l1, // se il secondo è <= del primo vado in l1 perché metto in stack true (left <= right)
+				"bleq " + l1, // vado in l1 perché metto in stack true (left <= right)
 				"push 0", // altrimenti metto in stack false
 				"b " + l2, // salto incondizionato su l2 per saltare l1
 				l1 + ":",
@@ -66,24 +66,15 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	public String visitNode(GreqNode n) throws VoidException {
 		String l1 = freshLabel();
 		String l2 = freshLabel();
-		String l3 = freshLabel();
 		return nlJoin(
-				visit(n.left), // pusho l'elemento sinistro
-				visit(n.right), // pusho l'elemento destro
-				"beq " + l1, // controllo che left == right: in caso positivo salto in l1
-
-				visit(n.left), // altrimenti rimetto gli operandi sullo stack
-				visit(n.right),
-				"bleq " + l2, // se left <= right salto a l2
-
+				visit(n.right), // push del primo elemento da controllare
+				visit(n.left), // push del secondo elemento
+				"bleq " + l1, // vado in l1 perché metto in stack true (left >= right)
+				"push 0", // altrimenti metto in stack false
+				"b " + l2, // salto incondizionato su l2 per saltare l1
 				l1 + ":",
-				"push 1", // altrimenti metto in stack true (left >= right)
-				"b " + l3, // salto incondizionato su l3
-
-				l2 + ":",
-				"push 0", // metto false, left non è maggiore o uguale di right
-
-				l3 + ":"
+				"push 1",
+				l2 + ":"
 		);
 	}
 
@@ -96,7 +87,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		return nlJoin(
 				visit(n.right), // pusho gli operandi
 				visit(n.left),
-				"bleq " + label1, // se left <= right significa che comanda l'operando sinistro
+				"bleq " + label1, // se right <= left significa che comanda l'operando sinistro
 				visit(n.right), // altrimenti comanda l'operando destro
 				"b " + label2,
 				label1 + ":",

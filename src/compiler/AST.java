@@ -313,9 +313,10 @@ public class AST {
 		}
 	}
 
-	public static class MethodTypeNode extends ArrowTypeNode {
-		MethodTypeNode(List<TypeNode> p, TypeNode r) {
-			super(p, r);
+	public static class MethodTypeNode extends TypeNode {
+		final ArrowTypeNode fun;
+		public MethodTypeNode(ArrowTypeNode arrowTypeNode) {
+			this.fun = arrowTypeNode;
 		}
 
 		@Override
