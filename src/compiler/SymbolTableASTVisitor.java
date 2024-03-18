@@ -122,8 +122,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		// visita di tutti i metodi dichiarati all'interno della classe
 		for (MethodNode method : n.methodlist) {
 			visit(method);
-			// dopo aver creato la STEntry associo al metodo il suo offset
-			method.offset = decOffset;
+
 			// aggiorno la lista methods relativa al ClassTypeNode
 			methods.add(new MethodTypeNode(new ArrowTypeNode(method.parlist.stream().map(DecNode::getType).collect(Collectors.toList()), method.retType)));
 		}
@@ -141,9 +140,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		Map<String, STentry> hm = symTable.get(nestingLevel);
 		List<TypeNode> parTypes = new ArrayList<>();
 		for (ParNode par : n.parlist) parTypes.add(par.getType());
-		n.offset = decOffset;
 
 		STentry entry = new STentry(nestingLevel, new MethodTypeNode(new ArrowTypeNode(parTypes,n.retType)),decOffset++);
+		n.offset = decOffset;
+
 		// aggiungo nella Virtual Table la STEntry del metodo associato al suo ID
 		if (hm.put(n.id, entry) != null) {
 			System.out.println("Method id " + n.id + " at line "+ n.getLine() +" already declared");
