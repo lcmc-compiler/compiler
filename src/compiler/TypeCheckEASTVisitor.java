@@ -278,14 +278,14 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		if(t instanceof MethodTypeNode)
 			at = ((MethodTypeNode) t);
 		else
-			throw new TypeException("Invocation of a non-method "+n.idMethod,n.getLine());
+			throw new TypeException("Invocation of a non-method \""+n.idMethod+"()\" on object "+n.id,n.getLine());
 
 		// controllo il numero e il tipo di parametri
 		if ( !(at.fun.parlist.size() == n.arglist.size()) )
-			throw new TypeException("Wrong number of parameters in the invocation of "+n.id,n.getLine());
+			throw new TypeException("Wrong number of parameters in the invocation of method \""+n.idMethod+"()\" on object "+n.id,n.getLine());
 		for (int i = 0; i < n.arglist.size(); i++)
 			if ( !(isSubtype(visit(n.arglist.get(i)),at.fun.parlist.get(i))) )
-				throw new TypeException("Wrong type for "+(i+1)+"-th parameter in the invocation of "+n.id,n.getLine());
+				throw new TypeException("Wrong type for "+(i+1)+"-th parameter in the invocation of method \""+n.idMethod+"()\" on object "+n.id,n.getLine());
 		return at.fun.ret;
 	}
 
