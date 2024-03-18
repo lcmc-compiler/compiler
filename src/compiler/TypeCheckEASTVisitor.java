@@ -28,13 +28,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	@Override
 	public TypeNode visitNode(ProgLetInNode n) throws TypeException {
 		if (print) printNode(n);
-		// visito le dichiarazioni delle classi
-		for (Node cl : n.classlist)
-			try {
-				visit(cl);
-			} catch (IncomplException e) {
-			}
-		// visito le dichiarazioni delle classi
+		// visito le dichiarazioni
 		for (Node dec : n.declist)
 			try {
 				visit(dec);
@@ -78,7 +72,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		// check che t1 e t2 siano istanze di RefType (siano entrambi riferimenti ad oggetti)
 		if(t1 instanceof RefTypeNode && t2 instanceof RefTypeNode) {
 			// in caso positivo controlliamo che si riferiscano alla stessa classe
-			if ( !isSameClass((RefTypeNode)t2,(RefTypeNode) t1) )
+			if ( !isSubtype(t2, t1) )
 				throw new TypeException("Incompatible class for variable " + n.id,n.getLine());
 		}
 
@@ -186,10 +180,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		TypeNode t = visit(n.entry);
 		ArrowTypeNode at;
 		// controllo che la chiamata sia relativa ad un metodo di una classe o di una funzione
-		if ( !(t instanceof ArrowTypeNode) )
-			throw new TypeException("Invocation of a non-function "+n.id,n.getLine());
-		else
+		if ( t instanceof ArrowTypeNode)
 			at = (ArrowTypeNode) t;
+		else if (t instanceof MethodTypeNode)
+			at = ((MethodTypeNode) t).fun;
+		else
+			throw new TypeException("Invocation of a non-function \""+n.id+"()\"",n.getLine());
 
 		// controllo sul numero e sul tipo di parametri
 		if ( !(at.parlist.size() == n.arglist.size()) )

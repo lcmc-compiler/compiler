@@ -11,7 +11,6 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void,VoidException> {
 	@Override
 	public Void visitNode(ProgLetInNode n) {
 		printNode(n);
-		for (Node cl : n.classlist) visit(cl);
 		for (Node dec : n.declist) visit(dec);
 		visit(n.exp);
 		return null;

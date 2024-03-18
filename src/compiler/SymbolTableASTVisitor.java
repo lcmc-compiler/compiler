@@ -31,8 +31,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		if (print) printNode(n);
 		Map<String, STentry> hm = new HashMap<>();
 		symTable.add(hm);
-		// visito prima le classi e poi le dichiarazioni
-		for (Node dec : n.classlist) visit(dec);
+		// visito le dichiarazioni (comprese le classi)
 	    for (Node dec : n.declist) visit(dec);
 		visit(n.exp);
 		symTable.remove(0);
@@ -140,9 +139,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		Map<String, STentry> hm = symTable.get(nestingLevel);
 		List<TypeNode> parTypes = new ArrayList<>();
 		for (ParNode par : n.parlist) parTypes.add(par.getType());
-
-		STentry entry = new STentry(nestingLevel, new MethodTypeNode(new ArrowTypeNode(parTypes,n.retType)),decOffset++);
 		n.offset = decOffset;
+		STentry entry = new STentry(nestingLevel, new MethodTypeNode(new ArrowTypeNode(parTypes,n.retType)),decOffset++);
 
 		// aggiungo nella Virtual Table la STEntry del metodo associato al suo ID
 		if (hm.put(n.id, entry) != null) {

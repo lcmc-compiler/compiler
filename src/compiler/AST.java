@@ -7,11 +7,9 @@ public class AST {
 	
 	public static class ProgLetInNode extends Node {
 		final List<DecNode> declist;
-		final List<ClassNode> classlist;
 		final Node exp;
-		ProgLetInNode(List<DecNode> d, List<ClassNode> c, Node e) {
+		ProgLetInNode(List<DecNode> d, Node e) {
 			declist = Collections.unmodifiableList(d);
-			classlist = Collections.unmodifiableList(c);
 			exp = e;
 		}
 
