@@ -44,7 +44,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	}
 
 	@Override
-	public String visitNode(LesseqNode n) throws VoidException {
+	public String visitNode(LessEqualNode n) throws VoidException {
 		String l1 = freshLabel();
 		String l2 = freshLabel();
 		return nlJoin(
@@ -60,7 +60,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	}
 
 	@Override
-	public String visitNode(GreqNode n) throws VoidException {
+	public String visitNode(GreaterEqualNode n) throws VoidException {
 		String l1 = freshLabel();
 		String l2 = freshLabel();
 		return nlJoin(

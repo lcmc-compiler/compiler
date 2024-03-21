@@ -116,11 +116,11 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 			n.setLine(c.EQ().getSymbol().getLine());
 		}
 		if(c.GE() != null) {
-			n = new GreqNode(visit(c.exp(0)), visit(c.exp(1)));
+			n = new GreaterEqualNode(visit(c.exp(0)), visit(c.exp(1)));
 			n.setLine(c.GE().getSymbol().getLine());
 		}
 		if(c.LE() != null) {
-			n = new LesseqNode(visit(c.exp(0)), visit(c.exp(1)));
+			n = new LessEqualNode(visit(c.exp(0)), visit(c.exp(1)));
 			n.setLine(c.LE().getSymbol().getLine());
 		}
 		return n;
