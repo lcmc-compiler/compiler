@@ -246,7 +246,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	}
 
 	@Override
-	public Void visitNode(LesseqNode n) throws VoidException {
+	public Void visitNode(LessEqualNode n) throws VoidException {
 		if (print) printNode(n);
 		visit(n.left);
 		visit(n.right);
@@ -254,7 +254,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	}
 
 	@Override
-	public Void visitNode(GreqNode n) throws VoidException {
+	public Void visitNode(GreaterEqualNode n) throws VoidException {
 		if (print) printNode(n);
 		visit(n.left);
 		visit(n.right);
